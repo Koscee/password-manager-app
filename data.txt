@@ -1,0 +1,4 @@
+Facebook | example@hotmail.com | 00010200
+Snapchat | example@hotmail.com | 000120
+Instagram | example@hotmail.com | 01233301
+Geek | example@hotmail.com | 012021
