@@ -50,12 +50,17 @@ def save():
                                                           f"   Password: {password} \n\nIs it ok to save?")
 
     if is_ok:
-        with open("data.json", mode="r") as data_file:
-            data = json.load(data_file)   # Read old data
+        try:
+            with open("data.json", mode="r") as data_file:
+                data = json.load(data_file)   # Read old data
+        except FileNotFoundError:
+            with open("data.json", mode="w") as data_file:
+                json.dump(new_record, data_file, indent=2)  # Write new data to file
+        else:
             data.update(new_record)     # Update old data with new data
-
-        with open("data.json", mode="w") as data_file:
-            json.dump(data, data_file, indent=2)   # Write updated data to file
+            with open("data.json", mode="w") as data_file:
+                json.dump(data, data_file, indent=2)   # Write updated data to file
+        finally:
             # clear all input fields except email
             for input_field in [field for field in input_fields if field != email_input]:
                 input_field.delete(0, END)
