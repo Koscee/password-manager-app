@@ -2,6 +2,7 @@ from tkinter import *
 from tkinter import messagebox
 from random import choice, randint, shuffle
 import pyperclip
+import json
 
 LABEL_PAD_Y = 10
 INPUT_FONT = ("", 13)
@@ -32,26 +33,32 @@ def generate_password():
 def save():
     input_fields = (website_input, email_input, password_input)
     form_data = [input_field.get() for input_field in input_fields]
-    separator = " | "
-    record = separator.join(form_data)
+    (website, email, password) = form_data
+    new_record = {
+        website: {
+            "email": email,
+            "password": password,
+        }
+    }
 
     for value in form_data:
         if not value:
             messagebox.showinfo(title="Oops", message="Please don't leave any fields empty!")
             return
 
-    (website, email, password) = form_data
     is_ok = messagebox.askokcancel(title=website, message=f"These are the details entered:\n   Email: {email}\n"
                                                           f"   Password: {password} \n\nIs it ok to save?")
 
     if is_ok:
-        # write record to file
-        with open("data.txt", mode="a") as data_file:
-            data_file.write(f"{record}\n")
+        with open("data.json", mode="r") as data_file:
+            data = json.load(data_file)   # Read old data
+            data.update(new_record)     # Update old data with new data
 
-        # clear all input fields except email
-        for input_field in [field for field in input_fields if field != email_input]:
-            input_field.delete(0, END)
+        with open("data.json", mode="w") as data_file:
+            json.dump(data, data_file, indent=2)   # Write updated data to file
+            # clear all input fields except email
+            for input_field in [field for field in input_fields if field != email_input]:
+                input_field.delete(0, END)
 
 
 # ---------------------------- UI SETUP ------------------------------- #
